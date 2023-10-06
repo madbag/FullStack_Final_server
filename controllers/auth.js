@@ -27,22 +27,25 @@ export const signup = async (req, res, next) => {
 };
 
 export const signin = async (req, res, next) => {
-  //   console.log(req.body);
+  console.log(req.body);
   try {
     const user = await User.findOne({ username: req.body.username });
-    if (!user) return next(handleError(404, "User not found"));
+    if (!user) {
+      console.log("there is no user");
+      return next(handleError(404, "User not found"));
+    }
 
     const isCorrect = await bcrypt.compare(req.body.password, user.password); //password matching from the form and from the `findOne`
     if (!isCorrect) return next(handleError(400, "Wrong Password"));
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT);//if the password passes it gives token(cookie) otherwise !isCorrect
-    console.log(token)
+    const token = jwt.sign({ id: user._id }, process.env.JWT); //if the password passes it gives token(cookie) otherwise !isCorrect
+    console.log(token);
     const { password, ...othersData } = user._doc;
 
     res
-      .cookie("access_token", token, { httpOnly: true })
+      .cookie("access_token", token, { httpOnly: false })
       .status(200) //cookie to the browser and then to the database
-      .json(othersData);
+      .json({ ...othersData, token });
   } catch (err) {
     next(err);
   }
