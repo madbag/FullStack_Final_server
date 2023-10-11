@@ -1,7 +1,6 @@
-// import { resolveSoa } from "dns";
 import { handleError } from "../error.js";
 import User from "../models/User.js";
-import Tweet from "../models/Tweet.js"
+// import Tweet from "../models/Tweet.js";
 
 //Find User
 export const getUser = async (req, res, next) => {
@@ -15,7 +14,10 @@ export const getUser = async (req, res, next) => {
 
 //Update User info
 export const update = async (req, res, next) => {
-  if (req.params.id === req.user.id) {
+  // res.json(req.user);
+  // return;
+  console.log("req user", req);
+  if (req.params.id) {
     //if user matches the id
     try {
       const updatedUser = await User.findByIdAndUpdate(
@@ -38,13 +40,12 @@ export const update = async (req, res, next) => {
 
 //Delete User
 export const deleteUser = async (req, res, next) => {
-  if (req.params.id === req.user.id) {
+  if (req.params.id) {
     //if user matches the id
     try {
-      await User.findByIdAndDelete(req.params.id);//find the user and delete
-      await Tweet.remove({userId: req.params.id});// find all the tweets made by the user and delete
-      
-      res.status(200).json("User Delete");
+      await User.findByIdAndDelete(req.params.id); //find the user and delete
+      // await Tweet.remove({ userId: req.params.id }); // find all the tweets made by the user and delete
+      res.status(200).json("user removed");
     } catch (err) {
       next(err);
     }
@@ -53,7 +54,7 @@ export const deleteUser = async (req, res, next) => {
   }
 };
 
-//following 
+//following
 export const follow = async (req, res, next) => {
   try {
     //user
@@ -70,12 +71,11 @@ export const follow = async (req, res, next) => {
 
       await currentUser.updateOne({
         $push: {
-          following: req.params.id
-        }
-      })
+          following: req.params.id,
+        },
+      });
     } else {
-      res.status(403)
-      .json("you already follow this user");
+      res.status(403).json("you already follow this user");
     }
     res.status(200).json("following the user");
   } catch (err) {
@@ -100,12 +100,11 @@ export const unfollow = async (req, res, next) => {
 
       await currentUser.updateOne({
         $pull: {
-          following: req.params.id
-        }
-      })
+          following: req.params.id,
+        },
+      });
     } else {
-      res.status(403)
-      .json("you are not following this user");
+      res.status(403).json("you are not following this user");
     }
     res.status(200).json("Unfollowing the user");
   } catch (err) {
