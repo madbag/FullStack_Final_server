@@ -39,5 +39,5 @@ app.use("/api/tweets", tweetRoutes);
 
 app.listen(8000, () => {
   connect();
-  console.log("Listening to port 8000");
+  console.log("Listening to port 8000");  
 });
