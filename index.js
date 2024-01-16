@@ -10,7 +10,7 @@ import morgan from "morgan";
 
 const app = express();
 app.use(morgan("dev"));
-const frontend_URL = process.env.ORIGIN || "http://localhost:3000";
+// const frontend_URL = process.env.ORIGIN || "http://localhost:8000";
 dotenv.config();
 
 const connect = () => {
@@ -31,13 +31,19 @@ const connect = () => {
 
 app.use(cookieParser()); //the token will not read the token and it will run an error
 app.use(express.json());
-app.use(cors({ origin: [`${frontend_URL}`] }));
-
+app.use(
+  cors({
+    origin: "https://ventout.netlify.app",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+    optionsSuccessStatus: 204,
+  })
+);
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/tweets", tweetRoutes);
 
 app.listen(8000, () => {
   connect();
-  console.log("Listening to port 8000");  
+  console.log("Listening to port 8000");
 });
