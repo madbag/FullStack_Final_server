@@ -31,7 +31,7 @@ const connect = () => {
 
 app.use(cookieParser()); //the token will not read the token and it will run an error
 app.use(express.json());
-app.use(cors({ origin: ["http://localhost:3000"] }));
+app.use(cors({ origin: [`${frontend_URL}`] }));
 
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
